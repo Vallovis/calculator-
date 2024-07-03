@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+        }
+        .calculator {
+            width: 500px;
+            height: 600px;
+            background-color: #000;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 2px #333;
+            display: flex;
+            flex-direction: column;
+        }
+        .history {
+            color: #888;
+            font-size: 18px;
+            padding: 20px;
+            text-align: right;
+            box-sizing: border-box;
+            height: 100px;
+            overflow-y: auto;
+            border-bottom: 1px solid #fff;
+        }
+        .history-item {
+            margin-bottom: 10px;
+            border-bottom: 1px solid #fff;
+        }
+        .display {
+            width: 100%;
+            height: 100px;
+            background-color: #000;
+            color: #fff;
+            font-size: 36px;
+            text-align: right;
+            padding: 20px;
+            box-sizing: border-box;
+            border: none;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+            padding: 20px;
+        }
+        .button {
+            width: 100%;
+            height: 80px;
+            background-color: #FFA500;
+            border: none;
+            border-radius: 5px;
+            font-size: 24px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="history" id="history"></div>
+        <input type="text" class="display" id="display" disabled>
+        <div class="buttons">
+            <button class="button" onclick="appendNumber('1')">1</button>
+            <button class="button" onclick="appendNumber('2')">2</button>
+            <button class="button" onclick="appendNumber('3')">3</button>
+            <button class="button" onclick="setOperation('+')">+</button>
+            <button class="button" onclick="appendNumber('4')">4</button>
+            <button class="button" onclick="appendNumber('5')">5</button>
+            <button class="button" onclick="appendNumber('6')">6</button>
+            <button class="button" onclick="setOperation('-')">-</button>
+            <button class="button" onclick="appendNumber('7')">7</button>
+            <button class="button" onclick="appendNumber('8')">8</button>
+            <button class="button" onclick="appendNumber('9')">9</button>
+            <button class="button" onclick="setOperation('*')">*</button>
+            <button class="button" onclick="appendNumber('0')">0</button>
+            <button class="button" onclick="clearDisplay()">C</button>
+            <button class="button" onclick="calculateResult()">=</button>
+            <button class="button" onclick="setOperation('/')">/</button>
+        </div>
+    </div>
+    <script>
+        let display = document.getElementById('display');
+        let history = document.getElementById('history');
+        let currentOperation = '';
+        let firstOperand = '';
+        let secondOperand = '';
+        let resultDisplayed = false;
+
+        function appendNumber(number) {
+            if (resultDisplayed) {
+                display.value = '';
+                resultDisplayed = false;
+            }
+            display.value += number;
+        }
+
+        function setOperation(operation) {
+            if (resultDisplayed) {
+                resultDisplayed = false;
+            }
+            let lastChar = display.value[display.value.length - 1];
+            if (['+', '-', '*', '/'].includes(lastChar)) {
+                display.value = display.value.slice(0, -1) + operation;
+            } else {
+                display.value += ` ${operation} `;
+            }
+        }
+
+        function clearDisplay() {
+            if (!resultDisplayed && display.value) {
+                let historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.textContent = display.value;
+                history.appendChild(historyItem);
+            }
+            display.value = '';
+            resultDisplayed = false;
+        }
+
+        function calculateResult() {
+            let expression = display.value;
+            try {
+                let result = eval(expression.replace('×', '*').replace('÷', '/'));
+                let historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.textContent = expression + ' = ' + result;
+                history.appendChild(historyItem);
+                display.value = result;
+                resultDisplayed = true;
+            } catch (e) {
+                display.value = 'Error';
+            }
+        }
+    </script>
+</body>
+</html>
